@@ -1,7 +1,10 @@
-package com.danielchan;
+package PlagiarismChecker;
+
+import java.text.DecimalFormat;
 
 /**
- * The main class that drives the entire application
+ * The main class that drives the entire application, instantiates PlagiarismChecker and invokes
+ * methods from it.
  */
 public class Main {
 
@@ -9,6 +12,7 @@ public class Main {
 
         // Default to 3,
         int tupleSize = 3;
+        double similarityScore = 0;
 
         // Limiting the number of arguments to be between 3 and 4. Exit code is -1.
         if (args.length < 3 || args.length > 4) {
@@ -22,19 +26,25 @@ public class Main {
             System.exit(-1);
         }
 
-        // Ensures that we aren't parsing anything other than integers and that the integer that was passed is positive.
+        // Ensures that we aren't parsing anything other than integers and that the integer that
+        // was passed is positive.
         try {
-            if(args.length == 4 && Integer.parseInt(args[3]) > 0) {
+            if(args.length == 4) {
                 tupleSize = Integer.parseInt(args[3]);
-                PlagiarismChecker pgChecker = new PlagiarismChecker(args[0], args[1], args[2], tupleSize);
-                System.out.println(pgChecker.calculateSimilarityScore());
-            } else {
-                throw new IllegalArgumentException();
             }
+
+            PlagiarismChecker pgChecker = new PlagiarismChecker(args[0], args[1], args[2], tupleSize);
+            similarityScore = pgChecker.calculateSimilarityScore();
         } catch(NumberFormatException e) {
-            System.out.println("Uh-oh, you've provided an illegal argument for the tuple value. Must be a positive integer.");
+            System.out.println("You provided an invalid value for the tuple size. Must be a " +
+                    "positive integer.");
+            System.exit(-1);
         } catch(IllegalArgumentException e) {
-            System.out.println("Uh-oh, you've provided an invalid integer. We need a positive integer!");
+            System.out.println(e.getMessage());
+            System.exit(-1);
+        } finally {
+            DecimalFormat df = new DecimalFormat("###.##");
+            System.out.println(df.format(similarityScore) + "%");
         }
     }
 }
